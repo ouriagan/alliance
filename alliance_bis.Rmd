@@ -1,0 +1,443 @@
+---
+title: "alliance"
+author: "Benjamin Thiry"
+date: "26/05/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+library(psych)
+library(sem)
+library(readxl)
+library(dplyr)
+library(Hmisc)
+library(kableExtra)
+library(FactoMineR)
+library(factoextra)
+library(ggplot2)
+library(car)
+library(gplots)
+
+
+# neototal <- read_excel("C:/Users/Ouriagan/OneDrive/alliancetherapeutique/neototal_2_2_2020.xlsx")
+neototal <- read_excel("C:/Users/Ouriagan/OneDrive/NEOPIR/neototal.xlsx")
+attach(neototal)
+alliance1 = O+A+C
+alliance2 = A2+O3+C5+O5
+alliance3 = (32-A5)+(32-A2)+(32-A1)
+alliance.df <- data.frame(age,sexe,N,E,O,A,C,N1, N2,N3,N4,N5,N6, E1, E2, E3, E4, E5, E6, O1, O2, O3, O4, O5, O6, A1, A2, A3, A4, A5, A6, C1, C2, C3, C4, C5, C6, alliance1,alliancepsy,therapie)
+alliance.df <- alliance.df[complete.cases(alliance.df), ]
+alliance.df <- alliance.df   %>% 
+     mutate(alliancebinaire = case_when(
+         alliance.df$alliancepsy == 0 ~ "Mauvaise",
+         alliance.df$alliancepsy == 1 ~ "Mauvaise",
+         alliance.df$alliancepsy == 2 ~ "Mauvaise",
+         alliance.df$alliancepsy == 3 ~ "Bonne",
+         alliance.df$alliancepsy == 4 ~ "Bonne"
+                       ))
+detach(neototal)
+attach(alliance.df)
+
+#N
+ntotal <- length(N)
+
+#age
+meanage <- round(mean(age, na.rm = TRUE), digit = 2)
+sdage <- round(sd(age, na.rm = TRUE), digit = 2)
+minage <- round(min(age, na.rm = TRUE), digit = 2)
+maxage <- round(max(age, na.rm = TRUE), digit = 2)
+
+#sexe
+nofmen <-length(which(sexe == "M")) 
+nofmenpercentage <- round(100*(length(which(sexe == "M"))/length(sexe)), digit = 0)
+
+nofwomen <- length(which(sexe == "F")) 
+nofwomenpercentage <- round(100*(length(which(sexe == "F"))/length(sexe)), digit = 0)
+```
+
+# Introduction
+
+A l'occasion d'une étude précédente, nous avons défini trois variables basées sur le modèle en cinq facteurs qui permettent d'évaluer les caractéristiques psychologiques d'un patient susceptibles de *faciliter* ou de *freiner* l'alliance thérapeutique. Une étude suivante a montré que ces trois indices étaient redondants et qu'un seul pouvait être retenu : 
+
+$$ Alliance1 = O+A+C $$
+
+Il s'agit d'additionner les scores obtenus aux domaines *Ouverture*, *Agréabilité* et *Conscience* du modèle en cinq facteurs. Bien que nous ayons fourni des données statistiques relatives à cette variable, nous ne disposions pas de données relatives à sa validité externe. Le but de cette étude est de fournir des résultats concernant cette *validité externe*. Pour ce faire, nous souhaitons comparer les scores obtenus par des patients au NEO PI et l'évaluation de l'alliance thérapeutique faite par des psychologues.
+Le score obtenu par les patients à l'indice *Alliance1 (O+A+c)* est-il lié à cette évaluation de l'alliance faite par les psychologues ? L'hypothèse de départ est que plus l'alliance thérapeutique est estimée bonne par les psychologues, plus le score d'*Alliance1* est élevé.
+
+# Méthode
+
+## Participants
+
+Les participants sont `r ntotal` personnes francophones. Parmi ces participants `r ntotal-7` ayant été condamnées ou internées, détenu(e)s dans des prisons belges et 7 patients reçus dans un service de consultation ambulatoire. Les détenu(e)s font l'objet d'une évaluation psychologique dans le cadre d'une demande de libération conditionnelle tandis que les patients fait l'objet d'une évaluation en vue d'une éventuelle prise en charge thérapeutique. 
+L'échantillon se compose de `r nofmen` hommes (`r nofmenpercentage`%)  et de `r nofwomen` femmes (`r nofwomenpercentage`%).
+L'âge moyen est égal à `r meanage` (ET = `r sdage`, min = `r minage`, max = `r maxage`) ans. Dans le cadre de cette évaluation, le / la psychologue en charge de l'évaluation peut administrer des tests psychologiques tels que le NEO PI (R ou 3). La personne évaluée peut accepter ou refuser de passer ce test. En cas d'accord, le test est administré, coté, interprété puis discuté avec elle de manière la plus transparente possible. Notons à ce titre (et c'est important ici de le mentionner), que si la personne détenue est très réfractaire à l'évaluation et à rencontrer le / la psychologue, la passation de tests auto-rapportés est généralement compromise, déconseillée et parfois impossible. La passation de tests nécessite de facto une collaboration minimale.
+
+## Echelles de mesure
+
+### NEO PI
+
+Le NEO PI est un questionnaire de personnalité autorapporté se composant de 240 affirmations pour lesquelles les participants doivent indiquer sur la feuille de réponses s'ils sont Fortement en Désaccord, en Désaccord, Neutre, en Accord ou Fortement en Accord. Les réponses permettent de calculer des scores pour les cinq domaines et pour les trente facettes du modèle de personnalité en cinq facteurs (Névrosisme, Extraversion, Ouverture, caractère Agréable et caractère Consciencieux). L’inventaire NEO PI-R (R pour Révisé) a été publié en 1992 en anglais puis en 1998 pour la version française (Costa, McCrae & Rolland, 1998). Le NEO PI 3 existe quant à lui depuis 2005 en anglais et depuis 2016 en français. Il existe peu de différences entre les deux versions du test : seuls quelques items de la version 3 ont été reformuler afin d'être plus facilement compris par les participants. Le sens des items n'étaient pas modifiés.
+
+Pour chaque détenu(e) qui avait passé le NEO PI, nous avons demandé au psychologue en charge de son évaluation de répondre à deux questions.
+
+### Quelle est la qualité de l'alliance thérapeutique entre vous et le / la détenu(e) évalué(e) ?
+
+| Code | Caractéristiques de l'alliance thérapeutique                                                                                                                                                                                                            |
+|------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1    | Le / la détenu(e) refuse le cadre des entretiens cliniques. Il ne se présente pas aux entretiens ou s'y rend pour contester leur utilité ou critiquer le / la psychologue.                                                                                      |
+| 2    | Le / la détenu(e) accepte de rencontrer le / la psychologue par obligation. Il répond aux questions de manière laconique et superficielle sans exprimer nécessairement son opposition de manière explicite.                                                                    |
+| 3    | Le / la détenu(e) accepte volontiers de rencontrer le / la psychologue et répond aux questions de manière authentique. Il / elle semble lui faire confiance dans la réalisation de l'évaluation psychologique                                                          |
+| 4    | Le / la détenu(e) se montre très investi(e) dans le processus d'évaluation, se montre demandeur / euse de rencontrer le / la psychologue, participe activement à la réflexion et évoque parfois combien les entretiens précédents l'ont amené(e) à changer son point de vue. |
+
+### Selon vous, le / la détenu(e) tirerait-il / elle avantage d'une prise en charge psychologique ?
+
+
+| Code | Réponse |          
+|:----:|:-------:|
+| 0    |  Non    |
+| 1    |  Oui    | 
+
+
+# Résultats
+
+Le tableau taballiancepsy indique la fréquence des scores de qualité d'alliance thérapeutique des psychologues carcéraux pour chaque détenu(e) évalué(e).
+
+```{r taballiancepsy, echo = FALSE}
+taballiancepsy <- table(alliancepsy)
+barplot(taballiancepsy,
+main="Qualité d'alliance de travail",
+xlab="Qualité d'alliance de travail",
+ylab="Fréquence",
+border="black",
+col="grey",
+)
+text(1, 35, paste("N =", sum(complete.cases(alliancepsy))), cex=1.2)
+```
+
+Nous constatons que l'alliance est souvent qualifiée de bonne (3) ou de très bonne (4).
+Ce score de qualité d'alliance thérapeutique est-il corrélé avec l'indice *O+A+C* que nous avons créé à partir du modèle de personnalité en cinq facteur ?
+
+```{r echo=FALSE, warning=FALSE}
+coralliance1alliancepsy <- cor.test(alliance.df$alliance1, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+coralliance1alliancepsyr <- round(coralliance1alliancepsy$estimate,2)
+coralliance1alliancepsyp <- round(coralliance1alliancepsy$p.value,2)
+```
+
+La corrélation entre les variables *O+A+C* et *alliancepsy* est égale à `r coralliance1alliancepsyr` (*p* = `r coralliance1alliancepsyp`), c'est-à-dire nulle. Les deux variables sont indépendantes l'une de l'autre.
+
+```{r allianceoac, echo=FALSE, warning=FALSE}
+plotmeans(alliance.df$alliance1 ~ alliance.df$alliancepsy, xlab="Qualité de l'alliance thérapeutique", ylab="O+A+C")
+```
+
+La figure allianceoac illustre cette absence de corrélation : les moyennes obtenues pour chaque score d'alliance thérapeutique évaluée par le / la psychologue ne diffèrent pas les unes des autres de manière significative.
+Qu'en est-il du lien éventuel entre les scores O+A+C et le pertinence (ou non) d'une prise en charge thérapeutique aux yeux du / de la psychologue évaluatrice ? 
+
+```{r echo=FALSE}
+ttestalliance1therapie <- t.test(alliance.df$alliance1 ~ alliance.df$therapie)
+ttestalliance1therapiepvalue <- round(ttestalliance1therapie$p.value,  digit = 3) 
+ttestalliance1therapieparameter <- round(ttestalliance1therapie$parameter,  digit = 3)  
+```
+
+Nous pouvons comparer les moyens moyens obtenus pour la variable *O+A+C* pour les deux groupes de détenus, d'une part ceux pour lesquels une prise en charge psychologique est conseillée et d'autre part ceux pour lesquels elle ne l'est pas. A l'aide d'un test t, nous contatons que les deux moyennes ne sont pas significativement différentes (*t* = `r ttestalliance1therapieparameter`, *p* = `r ttestalliance1therapiepvalue`).
+
+La figure therapieoac permet de constater visuellement que les scores pour O+A+C sont globalement identiques pour les deux groupes.
+
+```{r therapieoac, echo=FALSE}
+plotmeans(alliance.df$alliance1 ~ alliance.df$therapie, xlab="Prise en charge psychologique ?", ylab="O+A+C")
+```
+
+L'indice O+A+C ne semble dès lors pas offrir de validité externe avec les deux questions posées aux psychologues relatives à la qualité de l'alliance et le pertinence d'une thérapie.
+
+Afin de poursuivre nos investigations, nous pouvons nous demander si d'autres domaines de la personnalité pourraient qyabt à eux avoir un effet sur les deux questions posées.
+
+
+## Lien entre la personnalité du détenu et la qualité de l'alliance thérapeutique
+
+```{r echo=FALSE, warning=FALSE}
+# N
+corNalliancepsy <- cor.test(alliance.df$N, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corNalliancepsyr <- round(corNalliancepsy$estimate,2)
+corNalliancepsyp <- round(corNalliancepsy$p.value,2)
+# E
+corEalliancepsy <- cor.test(alliance.df$E, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corEalliancepsyr <- round(corEalliancepsy$estimate,2)
+corEalliancepsyp <- round(corEalliancepsy$p.value,2)
+# O
+corOalliancepsy <- cor.test(alliance.df$O, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corOalliancepsyr <- round(corOalliancepsy$estimate,2)
+corOalliancepsyp <- round(corOalliancepsy$p.value,2)
+# A
+corAalliancepsy <- cor.test(alliance.df$A, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corAalliancepsyr <- round(corAalliancepsy$estimate,2)
+corAalliancepsyp <- round(corAalliancepsy$p.value,2)
+# C
+corCalliancepsy <- cor.test(alliance.df$C, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corCalliancepsyr <- round(corCalliancepsy$estimate,2)
+corCalliancepsyp <- round(corCalliancepsy$p.value,2)
+tablecor.df <- data.frame(Domaine= c("N","E","O","A","C"), r = c(corNalliancepsyr, corEalliancepsyr, corOalliancepsyr, corAalliancepsyr,corCalliancepsyr), p = c(corNalliancepsyp, corEalliancepsyp, corOalliancepsyp, corAalliancepsyp, corCalliancepsyp))
+```
+
+Pour répondre à cette question, nous avons calculé la corrélation de spearman (non paramétrique) entre les cinq grands domaines de la personnalité tels qu'évalués par le NEO PI et les deux variables d'évaluation de l'alliance évaluées par les psychologues. Le tableau tablecor.df montre le résultats de ces corrélations.
+
+
+```{r tablecor,  echo=FALSE}
+kbl(tablecor.df, caption = "Corrélations de spearman entre les domaines de personnalité et l'alliance thérapetique évaluée par les psychologues carcéraux", booktabs = T) 
+```
+
+Ce tableau semble indiquer un lien significatif entre le score obtenu au névrosime par le / la détenu(e) et la qualité de l'alliance thérapeutique évaluée par le / la psychologue : au plus ce score serait élévé, au plus l'alliance serait bonne. Les quatre autres domaines de la personnalité (Extraversion, Ouverture, Agréabilité et Conscience) ne semblent pas liés avec la qualité de l'alliance.
+Intéressons nous au lien entre Névrosisme et l'alliance thérapeutique.
+
+## Névrosisme des détenus et qualité de l'alliance thérapeutique
+
+
+```{r echo=FALSE, warning=FALSE}
+plotmeans(N ~ alliancepsy, xlab="Qualité de l'alliance thérapeutique")
+```
+
+Ce graphique semble suggérer que les scores de névrosisme seraient plus élevés lorsque les psychologues rapportent une alliance thérapeutique bonne ou très bonne alors que les score seraient inférieurs pour les alliances thérapeutiques inférieures. Pour vérifier cette impression, nous créons deux groupes : un premier groupe de détenus pour lesquelles l'alliance a été cotée 0, 1 ou 2 (mauvaise alliance) et un second groupe pour lesquels l'alliance a été cotée 3 ou 4 (bonne alliance). Quels sont les scores de névrosisme pour ces deux groupes ?
+
+```{r echo=FALSE}
+plotmeans(alliance.df$N ~ alliance.df$alliancebinaire, xlab="Qualité de l'alliance thérapeutique", ylab="Névrosisme")
+```
+
+```{r echo=FALSE}
+ttestnalliancebinaire <- t.test(N ~ alliancebinaire)
+ttestnalliancebinairepvalue <- round(ttestnalliancebinaire$p.value,  digit = 3) 
+ttestnalliancebinaireparameter <- round(ttestnalliancebinaire$parameter,  digit = 3)  
+```
+
+Si nous comparons les scores de névrosisme pour ces deux groupes de détenus, nous constatons qu'ils sont significativement différents (*t* = `r ttestnalliancebinaireparameter`, *p* = `r ttestnalliancebinairepvalue`).
+
+## Lien entre la personnalité du détenu et la pertinence d'une psychothérapie
+
+Afin d'analyser ce lien, nous construisons un modèle de prédiction selon lequel, les variables N, E, O, A et C sont prises comme variables indépendants et la variable *therapie* comme variable dépendante. Comme il s'agit d'une variable binaire (0 ou 1), nous utilisons une régression logistique.
+
+```{r echo=FALSE}
+persotherapiereg=glm(alliance.df$therapie~N+E+O+A+C, family=binomial(link=logit))
+summary(persotherapiereg)
+```
+
+Le modèle de régression permet de constater que seule la variable N permet de prédire le score de la variable *therapie* de manière significative.
+
+```{r echo=FALSE}
+# pris de https://perso.ens-lyon.fr/lise.vaudor/realiser-une-regression-logistique-avec-r/
+Ntherapiereg=glm(alliance.df$therapie~N, family=binomial(link=logit))
+# summary(Ntherapiereg)
+logit_ypredit=0.04115*N-3.18526
+ypredit=exp(logit_ypredit)/(1+ exp(logit_ypredit))
+```
+
+La figure therapien représente le lien entre la variable N et la variable therapie. Ainsi peut-on constater que lorsque le score en N augmente, la probabilité que le / la psychologue encourage une prise en charge thérapeutique augmente.
+
+```{r therapien persotherapiereg, echo=FALSE}
+plot(N, alliance.df$therapie, ylab="Prise en charge psychologique ?")
+points(N,ypredit, col="red")
+```
+
+
+
+
+## Facettes N
+
+```{r echo=FALSE, warning=FALSE}
+# N1
+corN1alliancepsy <- cor.test(alliance.df$N1, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corN1alliancepsyr <- round(corN1alliancepsy$estimate,2)
+corN1alliancepsyp <- round(corN1alliancepsy$p.value,2)
+# N2
+corN2alliancepsy <- cor.test(alliance.df$N2, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corN2alliancepsyr <- round(corN2alliancepsy$estimate,2)
+corN2alliancepsyp <- round(corN2alliancepsy$p.value,2)
+# N3
+corN3alliancepsy <- cor.test(alliance.df$N3, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corN3alliancepsyr <- round(corN3alliancepsy$estimate,2)
+corN3alliancepsyp <- round(corN3alliancepsy$p.value,2)
+# N4
+corN4alliancepsy <- cor.test(alliance.df$N4, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corN4alliancepsyr <- round(corN4alliancepsy$estimate,2)
+corN4alliancepsyp <- round(corN4alliancepsy$p.value,2)
+# N5
+corN5alliancepsy <- cor.test(alliance.df$N5, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corN5alliancepsyr <- round(corN5alliancepsy$estimate,2)
+corN5alliancepsyp <- round(corN5alliancepsy$p.value,2)
+# N6
+corN6alliancepsy <- cor.test(alliance.df$N6, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corN6alliancepsyr <- round(corN6alliancepsy$estimate,2)
+corN6alliancepsyp <- round(corN6alliancepsy$p.value,2)
+
+tableNcor.df <- data.frame(Facette= c("N1","N2","N3","N4","N5","N6"), r = c(corN1alliancepsyr, corN2alliancepsyr, corN3alliancepsyr, corN4alliancepsyr,corN5alliancepsyr,corN6alliancepsyr), p = c(corN1alliancepsyp, corN2alliancepsyp, corN3alliancepsyp, corN4alliancepsyp, corN5alliancepsyp, corN6alliancepsyp))
+```
+
+```{r}
+N6alliancereg <- lm(alliance.df$alliancepsy~N6)
+summary(N6alliancereg)
+N6alliancereg_ypredit=0.042979*N6+2.178414
+N6allianceypredit=exp(N6alliancereg_ypredit)/(1+ exp(N6alliancereg_ypredit))
+```
+
+```{r alliancenreg, echo=FALSE}
+plot(N6, alliance.df$alliancepsy, ylab="Alliance")
+points(N6,N6alliancereg_ypredit, col="red")
+```
+
+La figure alliancenreg indique que plus la score de N6 augmente, au plus l'alliance est estimée meilleure par les psychologues
+
+```{r tableNcor,  echo=FALSE}
+kbl(tableNcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
+```
+
+## Facettes E
+
+```{r echo=FALSE, warning=FALSE}
+# E1
+corE1alliancepsy <- cor.test(alliance.df$E1, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corE1alliancepsyr <- round(corE1alliancepsy$estimate,2)
+corE1alliancepsyp <- round(corE1alliancepsy$p.value,2)
+# E2
+corE2alliancepsy <- cor.test(alliance.df$E2, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corE2alliancepsyr <- round(corE2alliancepsy$estimate,2)
+corE2alliancepsyp <- round(corE2alliancepsy$p.value,2)
+# E3
+corE3alliancepsy <- cor.test(alliance.df$E3, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corE3alliancepsyr <- round(corE3alliancepsy$estimate,2)
+corE3alliancepsyp <- round(corE3alliancepsy$p.value,2)
+# E4
+corE4alliancepsy <- cor.test(alliance.df$E4, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corE4alliancepsyr <- round(corE4alliancepsy$estimate,2)
+corE4alliancepsyp <- round(corE4alliancepsy$p.value,2)
+# E5
+corE5alliancepsy <- cor.test(alliance.df$E5, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corE5alliancepsyr <- round(corE5alliancepsy$estimate,2)
+corE5alliancepsyp <- round(corE5alliancepsy$p.value,2)
+# E6
+corE6alliancepsy <- cor.test(alliance.df$E6, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corE6alliancepsyr <- round(corE6alliancepsy$estimate,2)
+corE6alliancepsyp <- round(corE6alliancepsy$p.value,2)
+
+tableEcor.df <- data.frame(Facette= c("E1","E2","E3","E4","E5","E6"), r = c(corE1alliancepsyr, corE2alliancepsyr, corE3alliancepsyr, corE4alliancepsyr,corE5alliancepsyr,corE6alliancepsyr), p = c(corE1alliancepsyp, corE2alliancepsyp, corE3alliancepsyp, corE4alliancepsyp, corE5alliancepsyp, corE6alliancepsyp))
+```
+
+
+```{r tableEcor,  echo=FALSE}
+kbl(tableEcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
+```
+
+## Facettes O
+
+```{r echo=FALSE, warning=FALSE}
+# O1
+corO1alliancepsy <- cor.test(alliance.df$O1, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corO1alliancepsyr <- round(corO1alliancepsy$estimate,2)
+corO1alliancepsyp <- round(corO1alliancepsy$p.value,2)
+# O2
+corO2alliancepsy <- cor.test(alliance.df$O2, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corO2alliancepsyr <- round(corO2alliancepsy$estimate,2)
+corO2alliancepsyp <- round(corO2alliancepsy$p.value,2)
+# O3
+corO3alliancepsy <- cor.test(alliance.df$O3, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corO3alliancepsyr <- round(corO3alliancepsy$estimate,2)
+corO3alliancepsyp <- round(corO3alliancepsy$p.value,2)
+# O4
+corO4alliancepsy <- cor.test(alliance.df$O4, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corO4alliancepsyr <- round(corO4alliancepsy$estimate,2)
+corO4alliancepsyp <- round(corO4alliancepsy$p.value,2)
+# O5
+corO5alliancepsy <- cor.test(alliance.df$O5, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corO5alliancepsyr <- round(corO5alliancepsy$estimate,2)
+corO5alliancepsyp <- round(corO5alliancepsy$p.value,2)
+# O6
+corO6alliancepsy <- cor.test(alliance.df$O6, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corO6alliancepsyr <- round(corO6alliancepsy$estimate,2)
+corO6alliancepsyp <- round(corO6alliancepsy$p.value,2)
+
+tableOcor.df <- data.frame(Facette= c("O1","O2","O3","O4","O5","O6"), r = c(corO1alliancepsyr, corO2alliancepsyr, corO3alliancepsyr, corO4alliancepsyr,corO5alliancepsyr,corO6alliancepsyr), p = c(corO1alliancepsyp, corO2alliancepsyp, corO3alliancepsyp, corO4alliancepsyp, corO5alliancepsyp, corO6alliancepsyp))
+```
+
+
+```{r tableOcor,  echo=FALSE}
+kbl(tableOcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
+```
+
+## Facettes A
+
+```{r echo=FALSE, warning=FALSE}
+# A1
+corA1alliancepsy <- cor.test(alliance.df$A1, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corA1alliancepsyr <- round(corA1alliancepsy$estimate,2)
+corA1alliancepsyp <- round(corA1alliancepsy$p.value,2)
+# A2
+corA2alliancepsy <- cor.test(alliance.df$A2, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corA2alliancepsyr <- round(corA2alliancepsy$estimate,2)
+corA2alliancepsyp <- round(corA2alliancepsy$p.value,2)
+# A3
+corA3alliancepsy <- cor.test(alliance.df$A3, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corA3alliancepsyr <- round(corA3alliancepsy$estimate,2)
+corA3alliancepsyp <- round(corA3alliancepsy$p.value,2)
+# A4
+corA4alliancepsy <- cor.test(alliance.df$A4, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corA4alliancepsyr <- round(corA4alliancepsy$estimate,2)
+corA4alliancepsyp <- round(corA4alliancepsy$p.value,2)
+# A5
+corA5alliancepsy <- cor.test(alliance.df$A5, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corA5alliancepsyr <- round(corA5alliancepsy$estimate,2)
+corA5alliancepsyp <- round(corA5alliancepsy$p.value,2)
+# A6
+corA6alliancepsy <- cor.test(alliance.df$A6, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corA6alliancepsyr <- round(corA6alliancepsy$estimate,2)
+corA6alliancepsyp <- round(corA6alliancepsy$p.value,2)
+
+tableAcor.df <- data.frame(Facette= c("A1","A2","A3","A4","A5","A6"), r = c(corA1alliancepsyr, corA2alliancepsyr, corA3alliancepsyr, corA4alliancepsyr,corA5alliancepsyr,corA6alliancepsyr), p = c(corA1alliancepsyp, corA2alliancepsyp, corA3alliancepsyp, corA4alliancepsyp, corA5alliancepsyp, corA6alliancepsyp))
+```
+
+
+```{r tableAcor,  echo=FALSE}
+kbl(tableAcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
+```
+
+## Facettes C
+
+```{r echo=FALSE, warning=FALSE}
+# C1
+corC1alliancepsy <- cor.test(alliance.df$C1, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corC1alliancepsyr <- round(corC1alliancepsy$estimate,2)
+corC1alliancepsyp <- round(corC1alliancepsy$p.value,2)
+# C2
+corC2alliancepsy <- cor.test(alliance.df$C2, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corC2alliancepsyr <- round(corC2alliancepsy$estimate,2)
+corC2alliancepsyp <- round(corC2alliancepsy$p.value,2)
+# C3
+corC3alliancepsy <- cor.test(alliance.df$C3, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corC3alliancepsyr <- round(corC3alliancepsy$estimate,2)
+corC3alliancepsyp <- round(corC3alliancepsy$p.value,2)
+# C4
+corC4alliancepsy <- cor.test(alliance.df$C4, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corC4alliancepsyr <- round(corC4alliancepsy$estimate,2)
+corC4alliancepsyp <- round(corC4alliancepsy$p.value,2)
+# C5
+corC5alliancepsy <- cor.test(alliance.df$C5, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corC5alliancepsyr <- round(corC5alliancepsy$estimate,2)
+corC5alliancepsyp <- round(corC5alliancepsy$p.value,2)
+# C6
+corC6alliancepsy <- cor.test(alliance.df$C6, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
+corC6alliancepsyr <- round(corC6alliancepsy$estimate,2)
+corC6alliancepsyp <- round(corC6alliancepsy$p.value,2)
+
+tableCcor.df <- data.frame(Facette= c("C1","C2","C3","C4","C5","C6"), r = c(corC1alliancepsyr, corC2alliancepsyr, corC3alliancepsyr, corC4alliancepsyr,corC5alliancepsyr,corC6alliancepsyr), p = c(corC1alliancepsyp, corC2alliancepsyp, corC3alliancepsyp, corC4alliancepsyp, corC5alliancepsyp, corC6alliancepsyp))
+```
+
+```{r tableCcor,  echo=FALSE}
+kbl(tableCcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
+```
+
+# Discussion.
+
+Les résultats indiquent que dans la plupart des cas, les psychologues carcéraux estiment avoir une (très) bonne alliance thérapeutique avec les détenu(e)s qu'ils évaluent. Ce résultat peut surpendre compte tenu du cadre global (carcéral répressif) et de la situation d'évaluation (de nature expertale). Nous pouvons toutefois l'expliquer par deux raisons principales :
+
+1. l'évaluation psychologique carcérale nécessite des entretiens préalables au cours desquels les psychologues tentent de construire une relation de confiance à tout le moins minimale. Psychologue et détenu(e) sont unis par des objectifs communs qui visent à comprendre le parcours de vie pré-carcéral, les raisons du passage à l'acte délictueux et la tentative de prévoir un projet post-carcéral respectueux des souhaits du détenu et de la loi ;
+2. les détenu(e)s de notre échantillon ont accepté la passation d'un test psychologique (le NEO PI), ce qui va bien souvent de pair avec une relation de confiance minimale. Le / la psychologue que le / la détenu(e) menace explicitement d'agression, ne lui propose par de répondre à un questionnaire de personnalité auto-rapporté.
+
+
+Nos résultats montrent également que l'indice *O+A+C* que nous avions retenu pour tenter de prédire la qualité de l'alliance thérapeutique n'est pas significativement corrélé avec l'évaluation de cette alliance par le / la psychologue en charge de son évaluation en prison. Dans notre étude précédente, nous avions déjà pu nous étonner du caractère ambitieux de l'indice *O+A+C* du point de vue intellectuel, relationnel et cognitif et de l'absence d'éléments plus émotionnels (ce qui nous apparaissait contre-intuitif avec l'idée que la souffrance pourrait faciliter une prise en charge thérapeutique). 
+C'est la raison pour laquelle, nous avons décidé de nous intéresser aux liens éventuels entre la qualité de l'alliance thérapeutique et les autres domaines de la personnalité. Ainsi constatons-nous que le névrosisme des détenus semble positivement corrélé avec la qualité d'alliance thérapeutique évaluée par les psychologues. Il semble donc que ceux-ci nouent un lien clinique plus intense avec les détenu(e)s qui rapportaient des affects négatifs et désagréables.  
