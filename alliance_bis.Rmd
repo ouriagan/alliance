@@ -3,8 +3,8 @@ title: "alliance"
 author: "Benjamin Thiry"
 date: "26/05/2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -86,12 +86,12 @@ Pour chaque détenu(e) qui avait passé le NEO PI, nous avons demandé au psycho
 
 | Code | Caractéristiques de l'alliance thérapeutique                                                                                                                                                                                                            |
 |------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1    | Le / la détenu(e) refuse le cadre des entretiens cliniques. Il ne se présente pas aux entretiens ou s'y rend pour contester leur utilité ou critiquer le / la psychologue.                                                                                      |
-| 2    | Le / la détenu(e) accepte de rencontrer le / la psychologue par obligation. Il répond aux questions de manière laconique et superficielle sans exprimer nécessairement son opposition de manière explicite.                                                                    |
-| 3    | Le / la détenu(e) accepte volontiers de rencontrer le / la psychologue et répond aux questions de manière authentique. Il / elle semble lui faire confiance dans la réalisation de l'évaluation psychologique                                                          |
-| 4    | Le / la détenu(e) se montre très investi(e) dans le processus d'évaluation, se montre demandeur / euse de rencontrer le / la psychologue, participe activement à la réflexion et évoque parfois combien les entretiens précédents l'ont amené(e) à changer son point de vue. |
+| 1    | Le sujet refuse le cadre des entretiens cliniques. Il ne se présente pas aux entretiens ou s'y rend pour contester leur utilité ou critiquer le / la psychologue.                                                                                      |
+| 2    | Le sujet accepte de rencontrer le / la psychologue par obligation. Il répond aux questions de manière laconique et superficielle sans exprimer nécessairement son opposition de manière explicite.                                                                    |
+| 3    | Le sujet accepte volontiers de rencontrer le / la psychologue et répond aux questions de manière authentique. Il / elle semble lui faire confiance dans la réalisation de l'évaluation psychologique                                                          |
+| 4    | Le sujet se montre très investi(e) dans le processus d'évaluation, se montre demandeur / euse de rencontrer le / la psychologue, participe activement à la réflexion et évoque parfois combien les entretiens précédents l'ont amené(e) à changer son point de vue. |
 
-### Selon vous, le / la détenu(e) tirerait-il / elle avantage d'une prise en charge psychologique ?
+### Selon vous, la personne tirerait-elle avantage d'une prise en charge psychologique ?
 
 
 | Code | Réponse |          
@@ -102,7 +102,7 @@ Pour chaque détenu(e) qui avait passé le NEO PI, nous avons demandé au psycho
 
 # Résultats
 
-Le tableau taballiancepsy indique la fréquence des scores de qualité d'alliance thérapeutique des psychologues carcéraux pour chaque détenu(e) évalué(e).
+Le tableau taballiancepsy indique la fréquence des scores de qualité d'alliance thérapeutique des psychologues carcéraux pour chaque sujet évalué.
 
 ```{r taballiancepsy, echo = FALSE}
 taballiancepsy <- table(alliancepsy)
@@ -132,7 +132,7 @@ plotmeans(alliance.df$alliance1 ~ alliance.df$alliancepsy, xlab="Qualité de l'a
 ```
 
 La figure allianceoac illustre cette absence de corrélation : les moyennes obtenues pour chaque score d'alliance thérapeutique évaluée par le / la psychologue ne diffèrent pas les unes des autres de manière significative.
-Qu'en est-il du lien éventuel entre les scores O+A+C et le pertinence (ou non) d'une prise en charge thérapeutique aux yeux du / de la psychologue évaluatrice ? 
+Qu'en est-il du lien éventuel entre les scores O+A+C et le pertinence (ou non) d'une prise en charge thérapeutique aux yeux du / de la psychologue ? 
 
 ```{r echo=FALSE}
 ttestalliance1therapie <- t.test(alliance.df$alliance1 ~ alliance.df$therapie)
@@ -153,7 +153,7 @@ L'indice O+A+C ne semble dès lors pas offrir de validité externe avec les deux
 Afin de poursuivre nos investigations, nous pouvons nous demander si d'autres domaines de la personnalité pourraient qyabt à eux avoir un effet sur les deux questions posées.
 
 
-## Lien entre la personnalité du détenu et la qualité de l'alliance thérapeutique
+## Lien entre la personnalité du sujet et la qualité de l'alliance thérapeutique
 
 ```{r echo=FALSE, warning=FALSE}
 # N
@@ -186,11 +186,10 @@ Pour répondre à cette question, nous avons calculé la corrélation de spearma
 kbl(tablecor.df, caption = "Corrélations de spearman entre les domaines de personnalité et l'alliance thérapetique évaluée par les psychologues carcéraux", booktabs = T) 
 ```
 
-Ce tableau semble indiquer un lien significatif entre le score obtenu au névrosime par le / la détenu(e) et la qualité de l'alliance thérapeutique évaluée par le / la psychologue : au plus ce score serait élévé, au plus l'alliance serait bonne. Les quatre autres domaines de la personnalité (Extraversion, Ouverture, Agréabilité et Conscience) ne semblent pas liés avec la qualité de l'alliance.
+Ce tableau semble indiquer un lien significatif entre le score obtenu au névrosime par le le sujet et la qualité de l'alliance thérapeutique évaluée par le / la psychologue : au plus ce score serait élévé, au plus l'alliance serait bonne. Les quatre autres domaines de la personnalité (Extraversion, Ouverture, Agréabilité et Conscience) ne semblent pas liés avec la qualité de l'alliance.
 Intéressons nous au lien entre Névrosisme et l'alliance thérapeutique.
 
-## Névrosisme des détenus et qualité de l'alliance thérapeutique
-
+## Névrosisme des sujets et qualité de l'alliance thérapeutique
 
 ```{r echo=FALSE, warning=FALSE}
 plotmeans(N ~ alliancepsy, xlab="Qualité de l'alliance thérapeutique")
@@ -208,9 +207,9 @@ ttestnalliancebinairepvalue <- round(ttestnalliancebinaire$p.value,  digit = 3)
 ttestnalliancebinaireparameter <- round(ttestnalliancebinaire$parameter,  digit = 3)  
 ```
 
-Si nous comparons les scores de névrosisme pour ces deux groupes de détenus, nous constatons qu'ils sont significativement différents (*t* = `r ttestnalliancebinaireparameter`, *p* = `r ttestnalliancebinairepvalue`).
+Si nous comparons les scores de névrosisme pour ces deux groupes de sujets, nous constatons qu'ils sont significativement différents (*t* = `r ttestnalliancebinaireparameter`, *p* = `r ttestnalliancebinairepvalue`).
 
-## Lien entre la personnalité du détenu et la pertinence d'une psychothérapie
+## Lien entre la personnalité des sujets et la pertinence d'une psychothérapie
 
 Afin d'analyser ce lien, nous construisons un modèle de prédiction selon lequel, les variables N, E, O, A et C sont prises comme variables indépendants et la variable *therapie* comme variable dépendante. Comme il s'agit d'une variable binaire (0 ou 1), nous utilisons une régression logistique.
 
@@ -235,9 +234,6 @@ La figure therapien représente le lien entre la variable N et la variable thera
 plot(N, alliance.df$therapie, ylab="Prise en charge psychologique ?")
 points(N,ypredit, col="red")
 ```
-
-
-
 
 ## Facettes N
 
@@ -270,6 +266,10 @@ corN6alliancepsyp <- round(corN6alliancepsy$p.value,2)
 tableNcor.df <- data.frame(Facette= c("N1","N2","N3","N4","N5","N6"), r = c(corN1alliancepsyr, corN2alliancepsyr, corN3alliancepsyr, corN4alliancepsyr,corN5alliancepsyr,corN6alliancepsyr), p = c(corN1alliancepsyp, corN2alliancepsyp, corN3alliancepsyp, corN4alliancepsyp, corN5alliancepsyp, corN6alliancepsyp))
 ```
 
+```{r tableNcor,  echo=FALSE}
+kbl(tableNcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme des sujets et l'alliance thérapeutique évaluée par les psychologues", booktabs = T) 
+```
+
 ```{r}
 N6alliancereg <- lm(alliance.df$alliancepsy~N6)
 summary(N6alliancereg)
@@ -283,10 +283,6 @@ points(N6,N6alliancereg_ypredit, col="red")
 ```
 
 La figure alliancenreg indique que plus la score de N6 augmente, au plus l'alliance est estimée meilleure par les psychologues
-
-```{r tableNcor,  echo=FALSE}
-kbl(tableNcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
-```
 
 ## Facettes E
 
@@ -321,8 +317,10 @@ tableEcor.df <- data.frame(Facette= c("E1","E2","E3","E4","E5","E6"), r = c(corE
 
 
 ```{r tableEcor,  echo=FALSE}
-kbl(tableEcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
+kbl(tableEcor.df, caption = "Corrélations de spearman entre les facettes de l'extraversion des sujets  et l'alliance thérapeutique évaluée par les psychologues", booktabs = T) 
 ```
+
+Aucune corrélation significative n'apparaît. Il semble que ces facettes de la personnalité *ne* soient *pas* liées à la qualité de l'alliance thérapeutique évaluée par les psychologues.
 
 ## Facettes O
 
@@ -357,8 +355,10 @@ tableOcor.df <- data.frame(Facette= c("O1","O2","O3","O4","O5","O6"), r = c(corO
 
 
 ```{r tableOcor,  echo=FALSE}
-kbl(tableOcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
+kbl(tableOcor.df, caption = "Corrélations de spearman entre les facettes de l'ouverture des sujets et l'alliance thérapeutique évaluée par les psychologues", booktabs = T) 
 ```
+
+Aucune corrélation significative n'apparaît. Il semble que ces facettes de la personnalité *ne* soient *pas* liées à la qualité de l'alliance thérapeutique évaluée par les psychologues.
 
 ## Facettes A
 
@@ -393,8 +393,10 @@ tableAcor.df <- data.frame(Facette= c("A1","A2","A3","A4","A5","A6"), r = c(corA
 
 
 ```{r tableAcor,  echo=FALSE}
-kbl(tableAcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
+kbl(tableAcor.df, caption = "Corrélations de spearman entre les facettes du caractère agréable des sujets et l'alliance thérapeutique évaluée par les psychologues", booktabs = T) 
 ```
+
+Aucune corrélation significative n'apparaît. Il semble que ces facettes de la personnalité *ne* soient *pas* liées à la qualité de l'alliance thérapeutique évaluée par les psychologues.
 
 ## Facettes C
 
@@ -428,16 +430,18 @@ tableCcor.df <- data.frame(Facette= c("C1","C2","C3","C4","C5","C6"), r = c(corC
 ```
 
 ```{r tableCcor,  echo=FALSE}
-kbl(tableCcor.df, caption = "Corrélations de spearman entre les facettes de névrosisme et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
+kbl(tableCcor.df, caption = "Corrélations de spearman entre les facettes du caractère consciencieux des sujets et l'alliance thérapeutique évaluée par les psychologues", booktabs = T) 
 ```
 
-# Discussion.
+Aucune corrélation significative n'apparaît. Il semble que ces facettes de la personnalité *ne* soient *pas* liées à la qualité de l'alliance thérapeutique évaluée par les psychologues.
+
+
+# Discussion
 
 Les résultats indiquent que dans la plupart des cas, les psychologues carcéraux estiment avoir une (très) bonne alliance thérapeutique avec les détenu(e)s qu'ils évaluent. Ce résultat peut surpendre compte tenu du cadre global (carcéral répressif) et de la situation d'évaluation (de nature expertale). Nous pouvons toutefois l'expliquer par deux raisons principales :
 
 1. l'évaluation psychologique carcérale nécessite des entretiens préalables au cours desquels les psychologues tentent de construire une relation de confiance à tout le moins minimale. Psychologue et détenu(e) sont unis par des objectifs communs qui visent à comprendre le parcours de vie pré-carcéral, les raisons du passage à l'acte délictueux et la tentative de prévoir un projet post-carcéral respectueux des souhaits du détenu et de la loi ;
 2. les détenu(e)s de notre échantillon ont accepté la passation d'un test psychologique (le NEO PI), ce qui va bien souvent de pair avec une relation de confiance minimale. Le / la psychologue que le / la détenu(e) menace explicitement d'agression, ne lui propose par de répondre à un questionnaire de personnalité auto-rapporté.
-
 
 Nos résultats montrent également que l'indice *O+A+C* que nous avions retenu pour tenter de prédire la qualité de l'alliance thérapeutique n'est pas significativement corrélé avec l'évaluation de cette alliance par le / la psychologue en charge de son évaluation en prison. Dans notre étude précédente, nous avions déjà pu nous étonner du caractère ambitieux de l'indice *O+A+C* du point de vue intellectuel, relationnel et cognitif et de l'absence d'éléments plus émotionnels (ce qui nous apparaissait contre-intuitif avec l'idée que la souffrance pourrait faciliter une prise en charge thérapeutique). 
 C'est la raison pour laquelle, nous avons décidé de nous intéresser aux liens éventuels entre la qualité de l'alliance thérapeutique et les autres domaines de la personnalité. Ainsi constatons-nous que le névrosisme des détenus semble positivement corrélé avec la qualité d'alliance thérapeutique évaluée par les psychologues. Il semble donc que ceux-ci nouent un lien clinique plus intense avec les détenu(e)s qui rapportaient des affects négatifs et désagréables.  
