@@ -14,6 +14,7 @@ library(sem)
 library(readxl)
 library(dplyr)
 library(Hmisc)
+library(papaja)
 library(kableExtra)
 library(FactoMineR)
 library(factoextra)
@@ -60,6 +61,7 @@ nofwomenpercentage <- round(100*(length(which(sexe == "F"))/length(sexe)), digit
 
 # Introduction
 
+Lors d'un entretien clinique, le lien entre le patient et le professionnel repose notamment sur l'*alliance thérapeutique*. Selon @bioy2010alliance, "l'alliance thérapeutique peut se définir comme la collaboration mutuelle, le partenariat, entre le patient et le thérapeute dans le but d’accomplir les objectifs fixés". Notons que dans ce texte, nous prenons une définie élargie de l'alliance thérapeutique, c'est-à-dire qu'elle concerne toute relation professionnelle entre un patient et un clinicien sans que le cadre soit strictement thérapeutique. Ainsi, certains auteurs, tels que @greenson1971real, ont plutôt utilisé les termes d'*alliance de travail* car "chacun, sujet et professionnel, devient, pour un temps, partenaire, coacteur de cette rencontre de travail" [@cognet2022working].
 A l'occasion d'une étude précédente [@thiry2020assessing], nous avons défini trois variables basées sur le modèle en cinq facteurs qui permettent d'évaluer les caractéristiques psychologiques d'un patient susceptibles de *faciliter* ou de *freiner* l'alliance thérapeutique. Une étude suivante [@thiry2022qualités] a montré que ces trois indices étaient redondants et qu'un seul pouvait être retenu : 
 
 $$ Alliance1 = O+A+C $$
@@ -73,13 +75,13 @@ Le score obtenu par les patients à l'indice *Alliance1 (O+A+C)* est-il lié à 
 
 Les participants sont `r ntotal` personnes francophones. Parmi ces participants `r ntotal-7` ont été condamnés ou internés et sont détenus dans des prisons belges et 7 patients ont été reçus dans un service de consultation ambulatoire. Les détenu(e)s font l'objet d'une évaluation psychologique dans le cadre d'une demande de libération conditionnelle tandis que les patients font l'objet d'une évaluation en vue d'une éventuelle prise en charge thérapeutique. 
 L'échantillon se compose de `r nofmen` hommes (`r nofmenpercentage`%)  et de `r nofwomen` femmes (`r nofwomenpercentage`%).
-L'âge moyen est égal à `r meanage` (ET = `r sdage`, min = `r minage`, max = `r maxage`) ans. Dans le cadre de cette évaluation, le / la psychologue en charge de l'évaluation peut administrer des tests psychologiques tels que le NEO PI (R ou 3). La personne évaluée peut accepter ou refuser de passer ce test. En cas d'accord, le test est administré, coté, interprété puis discuté avec elle de manière la plus transparente possible. Notons à ce titre (et c'est important ici de le mentionner), que si la personne détenue est réfractaire à l'évaluation et à rencontrer le / la psychologue, la passation de tests auto-rapportés est généralement compromise, déconseillée et parfois impossible. La passation de tests nécessite de facto une collaboration minimale.
+L'âge moyen est égal à `r meanage` (ET = `r sdage`, min = `r minage`, max = `r maxage`) ans. Dans le cadre de cette évaluation, le / la psychologue en charge de l'évaluation peut administrer des tests psychologiques tels que le NEO PI (R ou 3). La personne évaluée peut accepter ou refuser de passer ce test. En cas d'accord, le test est administré, coté, interprété puis discuté avec elle de manière la plus transparente possible. Notons à ce titre (et c'est important ici de le mentionner), que si la personne est réfractaire à l'évaluation et à rencontrer le / la psychologue, la passation de tests auto-rapportés est généralement compromise, déconseillée et parfois impossible. La passation de tests nécessite de facto une collaboration minimale.
 
 ## Echelles de mesure
 
 ### NEO PI
 
-Le NEO PI est un questionnaire de personnalité autorapporté se composant de 240 affirmations pour lesquelles les participants doivent indiquer sur la feuille de réponses s'ils sont Fortement en Désaccord, en Désaccord, Neutre, en Accord ou Fortement en Accord. Les réponses permettent de calculer des scores pour les cinq domaines et pour les trente facettes du modèle de personnalité en cinq facteurs (Névrosisme, Extraversion, Ouverture, caractère Agréable et caractère Consciencieux). L’inventaire NEO PI-R (R pour Révisé) a été publié en 1992 en anglais puis en 1998 pour la version française (Costa, McCrae & Rolland, 1998). Le NEO PI 3 existe quant à lui depuis 2005 en anglais et depuis 2016 en français. Il existe peu de différences entre les deux versions du test : seuls quelques items de la version 3 ont été reformulés afin d'être plus facilement compris par les participants. Le sens des items n'étaient pas modifiés.
+Le NEO PI est un questionnaire de personnalité autorapporté se composant de 240 affirmations pour lesquelles les participants doivent indiquer sur la feuille de réponses s'ils sont Fortement en Désaccord, en Désaccord, Neutre, en Accord ou Fortement en Accord. Les réponses permettent de calculer des scores pour les cinq domaines et pour les trente facettes du modèle de personnalité en cinq facteurs (Névrosisme, Extraversion, Ouverture, caractère Agréable et caractère Consciencieux). L’inventaire NEO PI-R (R pour Révisé) a été publié en 1992 en anglais puis en 1998 pour la version française [@costa1998neo]. Le NEO PI 3 existe quant à lui depuis 2005 en anglais et depuis 2016 en français [@mccrae2016inventaires]. Il existe peu de différences entre les deux versions du test : seuls quelques items de la version 3 ont été reformulés afin d'être plus facilement compris par les participants. Le sens des items n'étaient pas modifiés.
 
 Pour chaque détenu(e) ou patient(e) qui avait passé le NEO PI, nous avons demandé au psychologue en charge de son évaluation de répondre à deux questions.
 
@@ -123,10 +125,10 @@ Ce score de qualité d'alliance thérapeutique est-il corrélé avec l'indice *O
 ```{r echo=FALSE, warning=FALSE}
 coralliance1alliancepsy <- cor.test(alliance.df$alliance1, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
 coralliance1alliancepsyr <- round(coralliance1alliancepsy$estimate,2)
-coralliance1alliancepsyp <- round(coralliance1alliancepsy$p.value,2)
+coralliance1alliancepsyp <- coralliance1alliancepsy$p.value
 ```
 
-La corrélation entre les variables *O+A+C* et *alliancepsy* est égale à `r coralliance1alliancepsyr` (*p* = `r coralliance1alliancepsyp`), c'est-à-dire nulle. Les deux variables sont indépendantes l'une de l'autre.
+La corrélation entre les variables *O+A+C* et *alliancepsy* est égale à `r coralliance1alliancepsyr` (*p* = `r printp(coralliance1alliancepsyp)`), c'est-à-dire nulle. Les deux variables peuvent être estimées indépendantes l'une de l'autre.
 
 ```{r allianceoac, echo=FALSE, warning=FALSE}
 plotmeans(alliance.df$alliance1 ~ alliance.df$alliancepsy, xlab="Qualité de l'alliance thérapeutique", ylab="O+A+C")
@@ -137,11 +139,11 @@ Qu'en est-il du lien éventuel entre les scores O+A+C et le pertinence (ou non) 
 
 ```{r echo=FALSE}
 ttestalliance1therapie <- t.test(alliance.df$alliance1 ~ alliance.df$therapie)
-ttestalliance1therapiepvalue <- round(ttestalliance1therapie$p.value,  digit = 3) 
+ttestalliance1therapiepvalue <- ttestalliance1therapie$p.value
 ttestalliance1therapieparameter <- round(ttestalliance1therapie$parameter,  digit = 3)  
 ```
 
-Nous pouvons comparer les moyens moyens obtenus pour la variable *O+A+C* pour les deux groupes de détenus, d'une part ceux pour lesquels une prise en charge psychologique est conseillée et d'autre part ceux pour lesquels elle ne l'est pas. A l'aide d'un test t, nous contatons que les deux moyennes ne sont pas significativement différentes (*t* = `r ttestalliance1therapieparameter`, *p* = `r ttestalliance1therapiepvalue`).
+Nous pouvons comparer les moyens moyens obtenus pour la variable *O+A+C* pour les deux groupes de détenus, d'une part ceux pour lesquels une prise en charge psychologique est conseillée et d'autre part ceux pour lesquels elle ne l'est pas. A l'aide d'un test *t*, nous contatons que les deux moyennes ne sont pas significativement différentes (*t* = `r ttestalliance1therapieparameter`, *p* = `r printp(ttestalliance1therapiepvalue)`).
 
 La figure therapieoac permet de constater visuellement que les scores pour O+A+C sont globalement identiques pour les deux groupes.
 
@@ -180,15 +182,15 @@ corCalliancepsyp <- round(corCalliancepsy$p.value,2)
 tablecor.df <- data.frame(Domaine= c("N","E","O","A","C"), r = c(corNalliancepsyr, corEalliancepsyr, corOalliancepsyr, corAalliancepsyr,corCalliancepsyr), p = c(corNalliancepsyp, corEalliancepsyp, corOalliancepsyp, corAalliancepsyp, corCalliancepsyp))
 ```
 
-Pour répondre à cette question, nous avons calculé la corrélation de spearman (non paramétrique) entre les cinq grands domaines de la personnalité tels qu'évalués par le NEO PI et les deux variables d'évaluation de l'alliance évaluées par les psychologues. Le tableau tablecor.df montre le résultats de ces corrélations.
+Pour répondre à cette question, nous avons calculé la corrélation de Spearman (non paramétrique) entre les cinq grands domaines de la personnalité tels qu'évalués par le NEO PI et les deux variables d'évaluation de l'alliance évaluées par les psychologues. Le tableau tablecor.df montre le résultat de ces corrélations.
 
 
 ```{r tablecor,  echo=FALSE}
-kbl(tablecor.df, caption = "Corrélations de spearman entre les domaines de personnalité et l'alliance thérapetique évaluée par les psychologues carcéraux", booktabs = T) 
+kbl(tablecor.df, caption = "Corrélations de Spearman entre les domaines de personnalité et l'alliance thérapeutique évaluée par les psychologues carcéraux", booktabs = T) 
 ```
 
 Ce tableau semble indiquer un lien significatif entre le score obtenu au *névrosisme* par le sujet et la qualité de l'alliance thérapeutique évaluée par le / la psychologue : au plus ce score serait élévé, au plus l'alliance serait bonne. Les quatre autres domaines de la personnalité (Extraversion, Ouverture, Agréabilité et Conscience) ne semblent pas liés avec la qualité de l'alliance.
-Intéressons nous au lien entre Névrosisme et l'alliance thérapeutique.
+Intéressons nous au lien entre névrosisme et l'alliance thérapeutique.
 
 ## Névrosisme des sujets et qualité de l'alliance thérapeutique
 
@@ -196,7 +198,7 @@ Intéressons nous au lien entre Névrosisme et l'alliance thérapeutique.
 plotmeans(N ~ alliancepsy, xlab="Qualité de l'alliance thérapeutique")
 ```
 
-Ce graphique semble suggérer que les scores de névrosisme seraient plus élevés lorsque les psychologues rapportent une alliance thérapeutique bonne ou très bonne alors que les score seraient inférieurs pour les alliances thérapeutiques inférieures. Pour vérifier cette impression, nous créons deux groupes : un premier groupe de détenus pour lesquelles l'alliance a été cotée 1 ou 2 (mauvaise alliance) et un second groupe pour lesquels l'alliance a été cotée 3 ou 4 (bonne alliance). Quels sont les scores de névrosisme pour ces deux groupes ?
+Ce graphique semble suggérer que les scores de névrosisme seraient plus élevés lorsque les psychologues rapportent une alliance thérapeutique bonne ou très bonne alors que les scores seraient inférieurs pour les alliances thérapeutiques inférieures. Pour vérifier cette impression, nous créons deux groupes : un premier groupe de détenus pour lesquelles l'alliance a été cotée 1 ou 2 (mauvaise alliance) et un second groupe pour lesquels l'alliance a été cotée 3 ou 4 (bonne alliance). Quels sont les scores de névrosisme pour ces deux groupes ?
 
 ```{r echo=FALSE}
 plotmeans(alliance.df$N ~ alliance.df$alliancebinaire, xlab="Qualité de l'alliance thérapeutique", ylab="Névrosisme")
@@ -204,11 +206,11 @@ plotmeans(alliance.df$N ~ alliance.df$alliancebinaire, xlab="Qualité de l'allia
 
 ```{r echo=FALSE}
 ttestnalliancebinaire <- t.test(N ~ alliancebinaire)
-ttestnalliancebinairepvalue <- round(ttestnalliancebinaire$p.value,  digit = 3) 
+ttestnalliancebinairepvalue <- ttestnalliancebinaire$p.value 
 ttestnalliancebinaireparameter <- round(ttestnalliancebinaire$parameter,  digit = 3)  
 ```
 
-Si nous comparons les scores de névrosisme pour ces deux groupes de sujets, nous constatons qu'ils sont significativement différents (*t* = `r ttestnalliancebinaireparameter`, *p* = `r ttestnalliancebinairepvalue`).
+Si nous comparons les scores de névrosisme pour ces deux groupes de sujets, nous constatons qu'ils sont significativement différents (*t* = `r ttestnalliancebinaireparameter`, *p* = `r printp(ttestnalliancebinairepvalue)`).
 
 ## Lien entre la personnalité des sujets et la pertinence d'une psychothérapie
 
@@ -266,9 +268,9 @@ corN5alliancepsyp <- round(corN5alliancepsy$p.value,2)
 # N6
 corN6alliancepsy <- cor.test(alliance.df$N6, alliance.df$alliancepsy, method = "spearman", use='complete.obs')
 corN6alliancepsyr <- round(corN6alliancepsy$estimate,2)
-corN6alliancepsyp <- round(corN6alliancepsy$p.value,2)
+corN6alliancepsyp <- corN6alliancepsy$p.value
 
-tableNcor.df <- data.frame(Facette= c("N1","N2","N3","N4","N5","N6"), r = c(corN1alliancepsyr, corN2alliancepsyr, corN3alliancepsyr, corN4alliancepsyr,corN5alliancepsyr,corN6alliancepsyr), p = c(corN1alliancepsyp, corN2alliancepsyp, corN3alliancepsyp, corN4alliancepsyp, corN5alliancepsyp, corN6alliancepsyp))
+tableNcor.df <- data.frame(Facette= c("N1","N2","N3","N4","N5","N6"), r = c(corN1alliancepsyr, corN2alliancepsyr, corN3alliancepsyr, corN4alliancepsyr,corN5alliancepsyr,corN6alliancepsyr), p = c(corN1alliancepsyp, corN2alliancepsyp, corN3alliancepsyp, corN4alliancepsyp, corN5alliancepsyp, printp(corN6alliancepsyp)))
 ```
 
 ```{r tableNcor,  echo=FALSE}
@@ -283,7 +285,7 @@ N6N3alliancereg <- lm(alliance.df$alliancepsy~N6+N3)
 summary(N6N3alliancereg)
 ```
 
-Nous constatons toutefois que l'introduction de ces deux variables indépendants fragilise le modèle prédictif. Nous décidons dès lors de ne retenir que la variable la plus corrélée, c'est-à-dire N6.
+Nous constatons toutefois que l'introduction de ces deux variables indépendantes fragilise le modèle prédictif. Nous décidons dès lors de ne retenir que la variable la plus corrélée, c'est-à-dire N6.
 
 
 ```{r}
@@ -300,50 +302,50 @@ plot(N6, alliance.df$alliancepsy, ylab="Alliance")
 points(N6,N6alliancereg_ypredit, col="red")
 ```
 
-La figure alliancenreg indique que plus la score de N6 augmente, au plus l'alliance est estimée meilleure par les psychologues
+La figure alliancenreg indique que plus le score de N6 augmente, au plus l'alliance est estimée meilleure par les psychologues.
 
 ## Facettes de N et l'indication de prise en charge thérapeutique
 
-Pour obtenir une première estimation du lien entre les facettes du Névrosisme et la tendance à poser une indication de prise en charge thérapeutique, nous calculons une corrélation de spearman entre les variables.
+Pour obtenir une première estimation du lien entre les facettes du Névrosisme et la tendance à poser une indication de prise en charge thérapeutique, nous calculons une corrélation de Spearman entre les variables.
 
 ```{r echo=FALSE, warning=FALSE}
 # N1
 corN1therapie <- cor.test(alliance.df$N1, alliance.df$therapie, method = "spearman", use='complete.obs')
 corN1therapier <- round(corN1therapie$estimate,2)
-corN1therapiep <- round(corN1therapie$p.value,2)
+corN1therapiep <- corN1therapie$p.value
 # N2
 corN2therapie <- cor.test(alliance.df$N2, alliance.df$therapie, method = "spearman", use='complete.obs')
 corN2therapier <- round(corN2therapie$estimate,2)
-corN2therapiep <- round(corN2therapie$p.value,2)
+corN2therapiep <- corN2therapie$p.value
 # N3
 corN3therapie <- cor.test(alliance.df$N3, alliance.df$therapie, method = "spearman", use='complete.obs')
 corN3therapier <- round(corN3therapie$estimate,2)
-corN3therapiep <- round(corN3therapie$p.value,2)
+corN3therapiep <- corN3therapie$p.value
 # N4
 corN4therapie <- cor.test(alliance.df$N4, alliance.df$therapie, method = "spearman", use='complete.obs')
 corN4therapier <- round(corN4therapie$estimate,2)
-corN4therapiep <- round(corN4therapie$p.value,2)
+corN4therapiep <- corN4therapie$p.value
 # N5
 corN5therapie <- cor.test(alliance.df$N5, alliance.df$therapie, method = "spearman", use='complete.obs')
 corN5therapier <- round(corN5therapie$estimate,2)
-corN5therapiep <- round(corN5therapie$p.value,2)
+corN5therapiep <- corN5therapie$p.value
 # N6
 corN6therapie <- cor.test(alliance.df$N6, alliance.df$therapie, method = "spearman", use='complete.obs')
 corN6therapier <- round(corN6therapie$estimate,2)
-corN6therapiep <- round(corN6therapie$p.value,2)
+corN6therapiep <- corN6therapie$p.value
 
-tableNbiscor.df <- data.frame(Facette= c("N1","N2","N3","N4","N5","N6"), r = c(corN1therapier, corN2therapier, corN3therapier, corN4therapier,corN5therapier,corN6therapier), p = c(corN1therapiep, corN2therapiep, corN3therapiep, corN4therapiep, corN5therapiep, corN6therapiep))
+tableNbiscor.df <- data.frame(Facette= c("N1","N2","N3","N4","N5","N6"), r = c(corN1therapier, corN2therapier, corN3therapier, corN4therapier,corN5therapier,corN6therapier), p = c(printp(corN1therapiep), printp(corN2therapiep), printp(corN3therapiep), printp(corN4therapiep), printp(corN5therapiep), printp(corN6therapiep)))
 ```
 
 ```{r tableNbiscor,  echo=FALSE}
-kbl(tableNbiscor.df, caption = "Corrélations de spearman entre les facettes de névrosisme des sujets et l'indication thérapeutique évaluée par les psychologues", booktabs = T) 
+kbl(tableNbiscor.df, caption = "Corrélations de Spearman entre les facettes de névrosisme des sujets et l'indication thérapeutique évaluée par les psychologues", booktabs = T) 
 ```
 
-Le tableau tableNbiscor indique quatre variables seraient significativement corrélées avec l'indication de prise en charge : N3 (Dépression), N4 (Timidité sociale), N6 (Vulnérabilité au stress) et N1 (Anxiété). Afin d'étudier ces liens de manière plus approfondie, nous construisons un modèle de régression logistique qui tente de prédire l'indication thérapeutique avec quatre variables indépendantes : N3, N4, N6 et N1.
+Le tableau tableNbiscor indique quatre variables seraient significativement corrélées avec l'indication de prise en charge : N3 (Dépression), N6 (Vulnérabilité au stress), N4 (Timidité sociale) et N1 (Anxiété). Afin d'étudier ces liens de manière plus approfondie, nous construisons un modèle de régression logistique qui tente de prédire l'indication thérapeutique avec quatre variables indépendantes : N3, N6, N4 et N1.
 
 ```{r echo=FALSE}
 # pris de https://perso.ens-lyon.fr/lise.vaudor/realiser-une-regression-logistique-avec-r/
-N3N4N6N1therapiereg=glm(alliance.df$therapie~N3+N4+N6+N1, family=binomial(link=logit))
+N3N4N6N1therapiereg=glm(alliance.df$therapie~N3+N6+N4+N1, family=binomial(link=logit))
 summary(N3N4N6N1therapiereg)
 # logit_ypredit=0.04115*N-3.18526
 # ypredit=exp(logit_ypredit)/(1+ exp(logit_ypredit))
@@ -366,15 +368,21 @@ Les résultats indiquent que dans la plupart des cas, les psychologues  estiment
 1. l'évaluation psychologique carcérale nécessite des entretiens préalables au cours desquels les psychologues tentent de construire une relation de confiance à tout le moins minimale. Psychologue et détenu(e) sont unis par des objectifs communs qui visent à comprendre le parcours de vie pré-carcéral, les raisons du passage à l'acte délictueux et la tentative de prévoir un projet post-carcéral respectueux des souhaits du détenu et de la loi ;
 2. les détenu(e)s de notre échantillon ont accepté la passation d'un test psychologique (le NEO PI), ce qui va bien souvent de pair avec une relation de confiance minimale. Le / la psychologue que le / la détenu(e) menace explicitement d'agression, ne lui propose généralement pas de répondre à un questionnaire de personnalité auto-rapporté.
 
-Nos résultats montrent également que l'indice *O+A+C* que nous avions retenu pour tenter de prédire la qualité de l'alliance thérapeutique *n*'est *pas* significativement corrélé avec l'évaluation de cette alliance par le / la psychologue en charge de son évaluation. Dans notre étude précédente, nous avions déjà pu nous étonner du caractère ambitieux de l'indice *O+A+C* du point de vue intellectuel, relationnel et cognitif et de l'absence d'éléments plus émotionnels (ce qui nous apparaissait contre-intuitif avec l'idée que la souffrance pourrait faciliter une prise en charge thérapeutique). 
+Nos résultats montrent également que l'indice *O+A+C* que nous avions retenu pour tenter de prédire la qualité de l'alliance thérapeutique *n*'est *pas* significativement corrélé avec l'évaluation de cette alliance par le / la psychologue en charge de son évaluation. Dans nos études précédentes [@thiry2020assessing;@thiry2022qualités], nous avions déjà pu nous étonner du caractère ambitieux de l'indice *O+A+C* du point de vue intellectuel, relationnel et cognitif et de l'absence d'éléments plus émotionnels (ce qui nous apparaissait contre-intuitif avec l'idée que la souffrance pourrait faciliter une prise en charge thérapeutique). 
 C'est la raison pour laquelle, nous avons décidé de nous intéresser aux liens éventuels entre la qualité de l'alliance thérapeutique et les autres domaines de la personnalité. Ainsi constatons-nous que le *Névrosisme* des sujets semble positivement corrélé avec la qualité d'alliance thérapeutique évaluée par les psychologues. Il semble donc que ceux-ci nouent un lien clinique plus intense avec les personnes qui rapportaient des affects négatifs et désagréables. En poursuivant davantage nos investigations au niveau des facettes de personnalité, nous sommes rendus compte que c'est la variable N6 (Vulnérabilité au stress) qui était particulièrement prédictrice de la qualité de l'alliance thérapeutique alors que c'était la variable N3 (Dépression) qui était particulièrement prédictrice de la propension des psychologues à poser une indication de prise en charge thérapeutique.
-Selon Costa & MCCrae, p. 34 la variable N6 se définit ainsi :
+Selon @mccrae2016inventaires [p.34], la variable N6 est définie ainsi :
 
 > Les personnes qui ont des notes élevées à cette échelle ont tendance à penser qu'elles sont peu capables de faire face aux situations difficiles, problématiques et stressantes. Quand elles se trouvent dans des situations d'urgence et de stress, elles peuvent être débordées par leurs émotions (émotions négatives telles que l'anxiété ou la peur) et éventuellement "paniquer".
 
-Egalement selon Costa & MCCrae, p. 33 la variable N3 se définit ainsi :
+Egalement selon @mccrae2016inventaires [p.33], la variable N3 est définie ainsi :
 
 > Cette échelle mesure les différences interindividuelles concernant la tendance à éprouver des affects de type dépressif. Les personnes ayant des notes élévées à cette échelle ont tendance à éprouver des sentiments tels que la culpabilité, la tristesse, des sentiments de solitude et parfois de désespoir. Elles peuvent être facilement découragées et abattues.
 
-Il semble donc que lorsque les psychologues sont amenés à évaluer la qualité de l'alliance thérapeutiques, ils soient sensibles aux capacités d'adaptation à des situations potentiellement difficiles. En outre, il est possible que les patients plus sensibles au stress soient plus enclins à nouer des liens privilégiés avec un professionnel susceptibles de les aider. Se sentant moins assurés, ils pourraient avoir tendance à se fier au psychologue, perçu comme une personne plus compétente à résoudre les problèmes. Ce vécu de vulnérabilité au stress pourrait être lié à une position plus immature voire infantile qui suscite la recherche d'une *bonne mère* au sens où l'entendait @winnicott1960theory
+Il semble donc que lorsque les psychologues sont amenés à évaluer la qualité de l'alliance thérapeutiques, ils soient sensibles aux capacités d'adaptation à des situations potentiellement difficiles. En outre, il est possible que les patients plus sensibles au stress soient plus enclins à nouer des liens privilégiés avec un professionnel susceptibles de les aider. Se sentant moins assurés, ils pourraient avoir tendance à se fier au psychologue, perçu comme une personne plus compétente à résoudre les problèmes. Ce vécu de vulnérabilité au stress pourrait être lié à une position plus immature voire infantile qui suscite la recherche d'une *bonne mère* au sens où l'entendait @winnicott1960theory.
+La qualité de l'alliance thérapeutique reposerait dès lors sur des bases plus émotionnelles que les psychologues pourraient le penser rationnellement. Elle reposerait en partie sur la croyance, consciente ou non, du patient que le psychologue est susceptible de l'aider à résoudre ses problèmes personnels. Cette position évoque une idéalisation plus ou moins prononcée du psychologue. Cette idéalisation a été décrite à de nombreuses reprises dans la littérature et trouve ses racines dans les conceptualisations de @freud1895etudes sur le *transfert* qui fut notamment repris par @lacan1967acte sous le concept de *sujet supposé savoir*. L'étude de l'idéalisation du psychothérapeute par le patient s'inscrit dans le cadre des relations thérapeutiques et de leurs effets sur les résultats cliniques. Selon le modèle de *transfert* et de *contre-transfert* développé par @freud1912dynamics, l'idéalisation du thérapeute peut être comprise comme une forme de *transfert positif*, où des attributs positifs sont projetés sur le thérapeute, facilitant ainsi la relation thérapeutique.
+Des travaux tels que ceux de @kohut1971analysis ont mis en évidence l'importance de la relation thérapeutique en tant que source de guérison psychologique, où l'idéalisation peut jouer un rôle dans le renforcement de l'estime de soi du patient. Cependant, des chercheurs comme @mitchell1988relational ont également souligné la nécessité de gérer cette idéalisation de manière à éviter des attentes irréalistes et des ruptures thérapeutiques.
+Une étude empirique de @blagys2000distinctive a examiné l'effet du transfert positif sur l'alliance thérapeutique et les résultats de la thérapie. Les résultats ont montré une corrélation positive entre le transfert positif initial et l'alliance thérapeutique, suggérant que l'idéalisation peut contribuer à l'établissement d'une alliance solide entre le patient et le thérapeute.
+Cependant, il convient de noter que des auteurs tels que @safran1996resolution ont souligné que l'idéalisation excessive peut entraver la compréhension des problèmes sous-jacents du patient. Ainsi, le thérapeute doit être attentif à l'évolution de cette dynamique et travailler à la fois avec l'idéalisation et les réactions éventuelles de déception ou de colère qui peuvent en découler.
+En somme, l'idéalisation du psychothérapeute par le patient peut influencer la qualité de la relation thérapeutique et, par conséquent, les résultats de la thérapie. Toutefois, il est essentiel de gérer cette idéalisation de manière équilibrée et d'être conscient de ses effets potentiels sur la dynamique thérapeutique, en tenant compte des multiples facettes des interactions complexes entre le patient et le thérapeute.
+
 
