@@ -1,5 +1,5 @@
 ---
-title: "alliance"
+title: "Comparaison d'un score d'alliance thérapeutique basé sur le modèle de personnalité en cinq facteurs et l'alliance thérapeutique évaluée par des psychologues"
 author: "Benjamin Thiry"
 date: "26/05/2020"
 output:
@@ -385,4 +385,4 @@ Une étude empirique de @blagys2000distinctive a examiné l'effet du transfert p
 Cependant, il convient de noter que des auteurs tels que @safran1996resolution ont souligné que l'idéalisation excessive peut entraver la compréhension des problèmes sous-jacents du patient. Ainsi, le thérapeute doit être attentif à l'évolution de cette dynamique et travailler à la fois avec l'idéalisation et les réactions éventuelles de déception ou de colère qui peuvent en découler.
 En somme, l'idéalisation du psychothérapeute par le patient peut influencer la qualité de la relation thérapeutique et, par conséquent, les résultats de la thérapie. Toutefois, il est essentiel de gérer cette idéalisation de manière équilibrée et d'être conscient de ses effets potentiels sur la dynamique thérapeutique, en tenant compte des multiples facettes des interactions complexes entre le patient et le thérapeute.
 
-
+Il s'agit toutefois des rester prudent dans la généralisation de cette étude. En effet, l'échantillon reste de taille modeste et porte surtout sur une population particulière, à savoir des personnes incarcérées. Elle s'intéresse dès lors à la création d'une alliance de travail avec des personnes qui consultent rarement des psychologues de manière spontanée. Cette création est importante car elle permet d'envisager éventuellement une prise en charge plus large et continue.
